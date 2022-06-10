@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import CalculatorDisplay from '../calculator-display/CalculatorDisplay';
 import CalculatorKeyboard, { OPERATORS } from '../calculator-keyboard/CalculatorKeyboard';
 import CalculatorHeader from '../header/Header';
+import CalculatorCalendar from '../calculator-calendar/CalculatorCalendar';
 
 
 const Calculator = () => {
@@ -77,6 +78,7 @@ const Calculator = () => {
       <CalculatorHeader name={'Groceries'} color={'#06B6D4'} icon={ <ShoppingCartIcon/> }/>
       <CalculatorDisplay>{prevNumber} {operator} {currentNumber}</CalculatorDisplay>
       <CalculatorKeyboard operator={operator} handleClick={handleClick}/>
+      <CalculatorCalendar>Thursday March, 10, 2022</CalculatorCalendar>
     </CalcSection>
   );
 }
