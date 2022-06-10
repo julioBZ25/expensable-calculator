@@ -6,9 +6,20 @@ const CalculatorDisplay = ({children}) => {
   background-color: white;
   height: 50px;
   margin: 1px 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 `
   return (
-    <CalcDisplay>$ {children}</CalcDisplay>
+    <CalcDisplay>
+      <p>
+        $
+      </p>
+      <p>
+        {children}
+      </p>
+    </CalcDisplay>
   )
 }
 

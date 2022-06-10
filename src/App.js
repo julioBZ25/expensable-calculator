@@ -16,10 +16,21 @@ const KEYBOARD_CALCULATOR=[
   '/','1', '2','3', '<-', 'x', '4','5', '6', 'c', '-','7', '8','9', '=', '+', 'A', '0', '.'
 ]
 
+function getButtonStyle(value){
+  if(Object.keys(OPERATORS).includes(value)){
+    return { backgroundColor: '#F3F4F6' }
+  }
+  if(value==='='){
+    return { backgroundColor: '#06B6D4', color: 'white'}
+  }
+  return {}
+}
+
 function App() {
   const [prevNumber, setPrevNumber] = React.useState(null)
   const [operator, setOperator] = React.useState(null)
   const [currentNumber, setCurrentNumber] = React.useState('0')
+  const [hasCalculated, setHasCalculated] = React.useState(false)
 
   const CalcSection = styled.section`
     background-color: #E5E7EB;
@@ -34,8 +45,9 @@ function App() {
   `
 
   function handleClick(value){
-    if (/\d/.test(value)){
-      if(currentNumber==='0'){
+    if (/[\d.]/.test(value)){
+      if(currentNumber==='0' || hasCalculated){
+        setHasCalculated(false)
         setCurrentNumber(value)
       }else{
         setCurrentNumber((currentNumber || '') + value)
@@ -47,10 +59,18 @@ function App() {
     }else{
       switch (value) {
         case '=':
-          setOperator(null)
-          const result = OPERATORS[operator](+prevNumber, +currentNumber)
-          setCurrentNumber(result)
-          setPrevNumber(null)
+          if(prevNumber && currentNumber){
+            setOperator(null)
+            const result = OPERATORS[operator](+prevNumber, +currentNumber)
+            setCurrentNumber(result)
+            setPrevNumber(null)
+          }else if(prevNumber && operator){
+            setOperator(null)
+            const result = OPERATORS[operator](+prevNumber, +prevNumber)
+            setCurrentNumber(result)
+            setPrevNumber(null)
+          }
+          setHasCalculated(true)
           break;
         case 'c':
           setOperator(null)
@@ -58,19 +78,19 @@ function App() {
           setCurrentNumber('0')
           break;
         case '<-':
-          const cnumber = currentNumber || '' 
+          const cnumber = currentNumber.toString() || ''
           if(cnumber.length === 1){
             if(!(prevNumber && operator)){
               setCurrentNumber('0')
             }else{
               setCurrentNumber(null)
             }
-          }else if(!currentNumber && (prevNumber && operator)){
+          }else if(!cnumber && (prevNumber && operator)){
             setCurrentNumber(prevNumber)
             setPrevNumber(null)
             setOperator(null)
           }else{
-            setCurrentNumber(currentNumber.slice(0,-1))
+            setCurrentNumber(cnumber.slice(0,-1))
           }
           break;
         default:
@@ -85,7 +105,9 @@ function App() {
       <CalculatorDisplay>{prevNumber} {operator} {currentNumber}</CalculatorDisplay>
       <CalcKeyboard>
         {KEYBOARD_CALCULATOR.map((value, index) => 
-          (<GeneralButton key={index} isLarge={value==='='} onClick={ () => handleClick(value) }>{value}</GeneralButton>)
+          (<GeneralButton key={index} isLarge={value==='='} operator={operator} style={getButtonStyle(value)} onClick={ () => handleClick(value) }>
+            {value}
+           </GeneralButton>)
         )}
       </CalcKeyboard>
     </CalcSection>
